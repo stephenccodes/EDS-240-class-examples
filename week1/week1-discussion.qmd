@@ -1,0 +1,91 @@
+---
+title: "Lecture 1.3 TEMPLATE"
+subtitle: "Wrangle fracking data"
+author: "Stephen Carroll"
+date: 2025-01-07
+toc: true
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+library(here)
+library(tidyverse)
+library(janitor)
+```
+
+
+#### Import Fracking Data
+
+```{r}
+fracking <- read_csv(here::here("week1", "data", "registryupload_1.csv"))
+```
+
+#### Data exploration
+```{r}
+dim(fracking)
+str(fracking)
+View(fracking)
+```
+
+
+#### Clean Fracking Data
+```{r}
+fracking_clean <- 
+fracking %>% 
+
+janitor::clean_names() %>% 
+
+mutate(job_start_date = str_remove(job_start_date, " AM")) %>% 
+
+mutate(datetime_start = mdy_hms(job_start_date)) %>% 
+
+mutate(year = year(datetime_start)) %>% 
+
+select(datetime_start, 
+       year, 
+       state_name, 
+       well_name, 
+       total_base_water_volume) %>% 
+
+mutate(state_name = str_to_title(state_name)) %>% 
+
+filter(!str_detect(string = state_name, pattern = "\\?")) %>% 
+
+mutate(state_name = ifelse(test = str_length(state_name) == 2,
+                            yes = abbr2state(state_name),
+                            no = state_name
+                           
+  )) %>% 
+  
+  mutate(state_name = case_when(
+    mutate(state_name = case_when(
+    state_name == "Colordao" ~ "Colorado",
+    state_name == "Loiusiana" ~ "Louisiana",
+    state_name == "Louisianna" ~ "Louisiana",
+    state_name == "Lousiana" ~ "Louisiana",
+    state_name == "New Mexcio" ~ "New Mexico",
+    state_name == "Norh Dakota" ~ "North Dakota",
+    state_name == "Norht Dakota" ~ "North Dakota",
+    state_name == "North  Dakota" ~ "North Dakota",
+    state_name == "North Dakata" ~ "North Dakota",
+    state_name == "North Dakotta" ~ "North Dakota",
+    state_name == "Noth Dakota" ~ "North Dakota",
+    state_name == "Pennslvania" ~ "Pennsylvania",
+    state_name == "Pennsylavania" ~ "Pennsylvania",
+    state_name == "Pennsylvanya" ~ "Pennsylvania",
+    state_name == "Penssylvania" ~ "Pennsylvania",
+    state_name == "Texasa" ~ "Texas",
+    state_name == "Texs" ~ "Texas", 
+    state_name == "West Viginia" ~ "West Virginia",
+    state_name == "Wyominng" ~ "Wyoming", 
+    TRUE ~ state_name # copy over rest of state names from as-is
+  ))
+  ))
+
+filter(!state_name %n% c("Beaver", "Beckham","Harper", "Hemphill", "Midland", "Red River", "Roosevelt", "Rusk", "State", "Ward"))
+
+fracking_clean
+```
+
+
