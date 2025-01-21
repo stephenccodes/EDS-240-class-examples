@@ -1,0 +1,95 @@
+---
+title: "Writing Alt Text"
+author: "Stephen Carroll"
+date: 2025-01-21
+toc: true
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+library(tidyverse)
+library(palmerpenguins)
+library(here)
+```
+# Adding alt text
+
+Include alt text with your data visualizations, no matter how you choose to embed them:
+
+1. If you’re rendering ggplot (or other data visualization) code within a .qmd file, add the fig-alt code chunk option:
+
+
+```{r}
+#| eval: true
+#| echo: false
+#| ## Example of how to include alt-text and caption in a rendered html document.
+#| fig-cap: "Figure caption text goes here"
+#| fig-alt: "Alt text goes here"
+ggplot(penguins, aes(x = species)) +
+  geom_boxplot()
+```
+
+2. If you’ve save your data visualization as an image file, you can embed it in a .qmd file using either markdown or html syntax:
+
+### Markdown
+
+![Figure caption goes here](file/path/to/image){fig-alt="Alt text goes here"}
+
+### HTML
+
+<img src="file/path/to/image" alt="Alt text goes here">
+
+## Example #1
+```{r}
+#| eval: true
+#| echo: true
+#| fig-cap: "Boxplot of penguin flipper lengths"
+#| fig-alt: "A boxplot of penguin flipper lengths where Gentoo penguins have flipper lengths that are about 12% larger than Adelie or Chinstrap penguins."
+
+ggplot(data = penguins, aes(x = species, y = flipper_length_mm)) +
+  geom_boxplot(aes(color = species), width = 0.3, show.legend = FALSE) +
+  geom_jitter(aes(color = species), alpha = 0.5, show.legend = FALSE, position = position_jitter(width = 0.2, seed = 0)) +
+  scale_color_manual(values = c("darkorange","purple","cyan4")) +
+  labs(x = "Species",
+       y = "Flipper length (mm)") +
+  theme_minimal()
+```
+
+Warning message is displaying as well as a regular output message. Let's remove them.
+
+```{r}
+#| warning: false
+#| echo: false
+#| message: false
+#| fig-cap: "Boxplot of penguin flipper lengths"
+#| fig-alt: "A boxplot of penguin flipper lengths where Gentoo penguins have flipper lengths that are about 12% larger than Adelie or Chinstrap penguins."
+
+ggplot(data = penguins, aes(x = species, y = flipper_length_mm)) +
+  geom_boxplot(aes(color = species), width = 0.3, show.legend = FALSE) +
+  geom_jitter(aes(color = species), alpha = 0.5, show.legend = FALSE, position = position_jitter(width = 0.2, seed = 0)) +
+  scale_color_manual(values = c("darkorange","purple","cyan4")) +
+  labs(x = "Species",
+       y = "Flipper length (mm)") +
+  theme_minimal()
+```
+
+```{r}
+#| warning: false
+#| echo: false
+#| message: false
+#| fig-cap: "Histogram of penguin species frequency"
+#| fig-alt: "A stacked histogram of penguin body massees per species where Gentoo has the higherst average body mass (in grams) over Adelie and Chinstrap species by x percent/ x grams."
+
+
+ggplot(data = penguins, aes(x = body_mass_g, fill = species)) +
+  geom_histogram(alpha = 0.5, 
+                 position = "identity") +
+  scale_fill_manual(values = c("darkorange","purple","cyan4")) +
+  labs(x = "Body mass (g)",
+       y = "Frequency",
+       title = "Penguin body masses")
+```
+
+![Monthly temperature anomalies compared to the average for the 20th century. ](nyt-monthly-temp.webp){fig-alt="A dot plot of monthly global temperature compared to the 20th century average. From 1975 onward, the yearly temperature is hotter than average, whereas prior to 1975 it is cooler htan average. The dots are colored in a range from blue to red, depending on the relative difference in temperature, with higher positive changes being depicted in red and negative changes in blue."}
+
+<img src="chapman-etal-2024.png" alt="A heatmap of global species observations are disproportionately from high income countries, particularly North American and European countries." width="600px">
